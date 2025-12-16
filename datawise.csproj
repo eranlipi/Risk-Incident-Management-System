@@ -61,6 +61,21 @@
     <Content Include="Controls\IncidentSummary.ascx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\FilterPanel.ascx.designer.cs">
+      <DependentUpon>FilterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IncidentSummary.ascx.designer.cs">
+      <DependentUpon>IncidentSummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IncidentForm.aspx.designer.cs">
+      <DependentUpon>IncidentForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IncidentList.aspx.designer.cs">
+      <DependentUpon>IncidentList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

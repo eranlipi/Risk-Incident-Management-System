@@ -190,7 +190,7 @@ public class ReportGenerator
             response.ContentType = "application/vnd.ms-excel";
             response.AddHeader("Content-Disposition", $"attachment; filename=Incident_{incidentId}_{DateTime.Now:yyyyMMdd_HHmmss}.xls");
             response.Charset = "UTF-8";
-            response.ContentEncoding = Encoding.UTF-8;
+            response.ContentEncoding = Encoding.UTF8;
 
             StringBuilder sb = new StringBuilder();
 
