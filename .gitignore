@@ -1,0 +1,83 @@
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.cache
+*.pdb
+*.mdb
+
+# Build Folders
+[Bb]in/
+[Oo]bj/
+publish/
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+.nuget/
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Rider
+.idea/
+
+# MSTest / Visual Studio Test Results
+TestResults/
+*.trx
+*.coverage
+
+# NCrunch
+*.ncrunch*
+
+# Build output
+*.dll
+*.exe
+*.app
+*.lib
+
+# Web
+node_modules/
+bower_components/
+npm-debug.log
+yarn-error.log
+
+# Database files
+*.mdf
+*.ldf
+
+# IIS Express
+/.vs/*/config/applicationhost.config
+
+# User-specific files
+*.local
+*.env
+.env*
+.vscode/
+
+# Publish related
+*.Publish.xml
+*.azurePubxml
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Sensitive files
+secrets.json
+
+# Other
+obj/**/Generated
+temp/
+
+# Keep App_Data (unless DB files inside should be ignored)
+# App_Data/

@@ -1,0 +1,263 @@
+using System;
+using System.Data;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+/// <summary>
+/// User Control for filtering incidents
+/// </summary>
+public partial class Controls_FilterPanel : System.Web.UI.UserControl
+{
+    private DatabaseHelper _db;
+
+    // Event that fires when search button is clicked
+    public event EventHandler SearchClicked;
+
+    // Event that fires when clear button is clicked
+    public event EventHandler ClearClicked;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        _db = new DatabaseHelper();
+
+        if (!IsPostBack)
+        {
+            LoadFilterData();
+        }
+    }
+
+    /// <summary>
+    /// Loads dropdown list data from database
+    /// </summary>
+    private void LoadFilterData()
+    {
+        try
+        {
+            // Load Departments
+            DataTable departments = _db.GetDepartments();
+            ddlDepartment.DataSource = departments;
+            ddlDepartment.DataTextField = "DepartmentName";
+            ddlDepartment.DataValueField = "DepartmentID";
+            ddlDepartment.DataBind();
+            ddlDepartment.Items.Insert(0, new ListItem("All Departments", ""));
+
+            // Load Locations
+            DataTable locations = _db.GetLocations();
+            ddlLocation.DataSource = locations;
+            ddlLocation.DataTextField = "LocationName";
+            ddlLocation.DataValueField = "LocationID";
+            ddlLocation.DataBind();
+            ddlLocation.Items.Insert(0, new ListItem("All Locations", ""));
+
+            // Load Categories
+            DataTable categories = _db.GetCategories();
+            ddlCategory.DataSource = categories;
+            ddlCategory.DataTextField = "CategoryName";
+            ddlCategory.DataValueField = "CategoryID";
+            ddlCategory.DataBind();
+            ddlCategory.Items.Insert(0, new ListItem("All Categories", ""));
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("FilterPanel.LoadFilterData", ex);
+            // Show error message to user
+        }
+    }
+
+    /// <summary>
+    /// Search button click handler
+    /// </summary>
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        // Raise the SearchClicked event
+        SearchClicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Clear button click handler
+    /// </summary>
+    protected void btnClear_Click(object sender, EventArgs e)
+    {
+        ClearFilters();
+
+        // Raise the ClearClicked event
+        ClearClicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Date range dropdown change handler
+    /// </summary>
+    protected void ddlDateRange_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        pnlCustomDateRange.Visible = (ddlDateRange.SelectedValue == "custom");
+        UpdatePanelFilter.Update();
+    }
+
+    /// <summary>
+    /// Clears all filter selections
+    /// </summary>
+    public void ClearFilters()
+    {
+        txtKeyword.Text = string.Empty;
+        ddlDepartment.SelectedIndex = 0;
+        ddlLocation.SelectedIndex = 0;
+        ddlCategory.SelectedIndex = 0;
+        ddlSeverity.SelectedIndex = 0;
+        ddlStatus.SelectedIndex = 0;
+        ddlDateRange.SelectedIndex = 0;
+        txtStartDate.Text = string.Empty;
+        txtEndDate.Text = string.Empty;
+        pnlCustomDateRange.Visible = false;
+        lblResultCount.Visible = false;
+    }
+
+    /// <summary>
+    /// Sets the result count label
+    /// </summary>
+    public void SetResultCount(int count)
+    {
+        lblResultCount.Text = $"{count} result{(count != 1 ? "s" : "")}";
+        lblResultCount.Visible = true;
+    }
+
+    #region Properties for accessing filter values
+
+    public string Keyword
+    {
+        get { return txtKeyword.Text.Trim(); }
+        set { txtKeyword.Text = value; }
+    }
+
+    public int? DepartmentId
+    {
+        get
+        {
+            return string.IsNullOrEmpty(ddlDepartment.SelectedValue)
+                ? (int?)null
+                : int.Parse(ddlDepartment.SelectedValue);
+        }
+        set
+        {
+            if (value.HasValue)
+                ddlDepartment.SelectedValue = value.Value.ToString();
+            else
+                ddlDepartment.SelectedIndex = 0;
+        }
+    }
+
+    public int? LocationId
+    {
+        get
+        {
+            return string.IsNullOrEmpty(ddlLocation.SelectedValue)
+                ? (int?)null
+                : int.Parse(ddlLocation.SelectedValue);
+        }
+        set
+        {
+            if (value.HasValue)
+                ddlLocation.SelectedValue = value.Value.ToString();
+            else
+                ddlLocation.SelectedIndex = 0;
+        }
+    }
+
+    public int? CategoryId
+    {
+        get
+        {
+            return string.IsNullOrEmpty(ddlCategory.SelectedValue)
+                ? (int?)null
+                : int.Parse(ddlCategory.SelectedValue);
+        }
+        set
+        {
+            if (value.HasValue)
+                ddlCategory.SelectedValue = value.Value.ToString();
+            else
+                ddlCategory.SelectedIndex = 0;
+        }
+    }
+
+    public int? Severity
+    {
+        get
+        {
+            return string.IsNullOrEmpty(ddlSeverity.SelectedValue)
+                ? (int?)null
+                : int.Parse(ddlSeverity.SelectedValue);
+        }
+        set
+        {
+            if (value.HasValue)
+                ddlSeverity.SelectedValue = value.Value.ToString();
+            else
+                ddlSeverity.SelectedIndex = 0;
+        }
+    }
+
+    public string Status
+    {
+        get { return ddlStatus.SelectedValue; }
+        set { ddlStatus.SelectedValue = value; }
+    }
+
+    public DateTime? StartDate
+    {
+        get
+        {
+            DateTime result;
+            if (ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtStartDate.Text, out result))
+                return result;
+
+            return GetStartDateFromRange();
+        }
+    }
+
+    public DateTime? EndDate
+    {
+        get
+        {
+            DateTime result;
+            if (ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtEndDate.Text, out result))
+                return result;
+
+            return GetEndDateFromRange();
+        }
+    }
+
+    /// <summary>
+    /// Calculates start date based on date range selection
+    /// </summary>
+    private DateTime? GetStartDateFromRange()
+    {
+        switch (ddlDateRange.SelectedValue)
+        {
+            case "today":
+                return DateTime.Today;
+            case "7days":
+                return DateTime.Today.AddDays(-7);
+            case "30days":
+                return DateTime.Today.AddDays(-30);
+            case "3months":
+                return DateTime.Today.AddMonths(-3);
+            case "6months":
+                return DateTime.Today.AddMonths(-6);
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// Calculates end date based on date range selection
+    /// </summary>
+    private DateTime? GetEndDateFromRange()
+    {
+        if (ddlDateRange.SelectedValue != "all")
+            return DateTime.Now;
+
+        return null;
+    }
+
+    #endregion
+}
