@@ -364,25 +364,4 @@ if (Cache["Departments"] == null)
 └── README.md
 ```
 
-### תיקיות שהוסרו ולמה:
-
-**❌ `/App_Code`** - הוחלף ב-`/BusinessLogic` ו-`/DataAccess` עם compiled assemblies
-
-**❌ `/Pages`** - קבצי ASPX הועברו לשורש לשיפור routing
-
-**❌ `/Styles`** - הוחלף ב-`/Assets/css` למבנה יותר מקצועי
-
-**❌ `/Scripts`** - הוחלף ב-`/Assets/js` למבנה אחיד
-
-**❌ `/Controls`** - שונה ל-`/UserControls` (שם מקובל יותר)
-
-### תיקיות חדשות והיתרונות:
-
-**✅ `/Models`** - POCOs נקיים, קלים לבדיקה ושימוש חוזר
-
-**✅ `/DataAccess`** - הפרדה ברורה של database logic מ-business rules
-
-**✅ `/Assets`** - ארגון מקצועי של קבצים סטטיים
-
-**✅ `/Database`** - כל ה-SQL scripts במקום אחד
 
