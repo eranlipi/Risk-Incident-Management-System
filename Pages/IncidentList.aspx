@@ -42,9 +42,7 @@
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <asp:Button ID="btnExportExcel" runat="server" Text="Export to Excel"
-                                                    CssClass="btn btn-sm btn-success" OnClick="btnExportExcel_Click">
-                                            <i class="fas fa-file-excel"></i>
-                                        </asp:Button>
+                                                    CssClass="btn btn-sm btn-success" OnClick="btnExportExcel_Click" />
                                     </div>
                                 </div>
                             </div>
@@ -127,9 +125,8 @@
                                                                     CommandName="DeleteIncident"
                                                                     CommandArgument='<%# Eval("IncidentID") %>'
                                                                     OnClientClick="return confirm('Are you sure you want to archive this incident?');"
-                                                                    title="Archive">
-                                                        <i class="fas fa-trash"></i>
-                                                    </asp:LinkButton>
+                                                                    title="Archive"
+                                                                    Text="Delete" />
                                                 </div>
                                             </ItemTemplate>
                                         </asp:TemplateField>

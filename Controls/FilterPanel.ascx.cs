@@ -79,7 +79,10 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         // Raise the SearchClicked event
-        SearchClicked?.Invoke(this, EventArgs.Empty);
+        if (SearchClicked != null)
+        {
+            SearchClicked.Invoke(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>
@@ -90,7 +93,10 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         ClearFilters();
 
         // Raise the ClearClicked event
-        ClearClicked?.Invoke(this, EventArgs.Empty);
+        if (ClearClicked != null)
+        {
+            ClearClicked.Invoke(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>
@@ -134,7 +140,7 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     {
         if (lblResultCount != null)
         {
-            lblResultCount.Text = $"{count} result{(count != 1 ? "s" : "")}";
+            lblResultCount.Text = string.Format("{0} result{1}", count, (count != 1 ? "s" : ""));
             lblResultCount.Visible = true;
         }
     }

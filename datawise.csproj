@@ -30,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +40,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -106,10 +108,10 @@
       <DependentUpon>IncidentSummary.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="App_Code\DatabaseHelper.cs" />
-    <Compile Include="App_Code\IncidentManager.cs" />
-    <Compile Include="App_Code\NotificationService.cs" />
-    <Compile Include="App_Code\ReportGenerator.cs" />
+    <Compile Include="App_Logic\DatabaseHelper.cs" />
+    <Compile Include="App_Logic\IncidentManager.cs" />
+    <Compile Include="App_Logic\NotificationService.cs" />
+    <Compile Include="App_Logic\ReportGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

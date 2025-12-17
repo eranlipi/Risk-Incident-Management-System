@@ -37,7 +37,7 @@ public class ReportGenerator
 
             if (incidents.Rows.Count > _maxExportRecords)
             {
-                throw new ApplicationException($"Export limited to {_maxExportRecords} records. Please filter your results.");
+                throw new ApplicationException(string.Format("Export limited to {0} records. Please filter your results.", _maxExportRecords));
             }
 
             // Set response headers for Excel download
@@ -45,7 +45,7 @@ public class ReportGenerator
             response.ClearHeaders();
             response.ClearContent();
             response.ContentType = "application/vnd.ms-excel";
-            response.AddHeader("Content-Disposition", $"attachment; filename={filename}_{DateTime.Now:yyyyMMdd_HHmmss}.xls");
+            response.AddHeader("Content-Disposition", string.Format("attachment; filename={0}_{1:yyyyMMdd_HHmmss}.xls", filename, DateTime.Now));
             response.Charset = "UTF-8";
             response.ContentEncoding = Encoding.UTF8;
 
@@ -164,7 +164,7 @@ public class ReportGenerator
             response.Write(sb.ToString());
             response.End();
 
-            Logger.LogInfo("ReportGenerator", $"Exported {incidents.Rows.Count} incidents to Excel");
+            Logger.LogInfo("ReportGenerator", string.Format("Exported {0} incidents to Excel", incidents.Rows.Count));
         }
         catch (Exception ex)
         {
@@ -188,7 +188,7 @@ public class ReportGenerator
             response.ClearHeaders();
             response.ClearContent();
             response.ContentType = "application/vnd.ms-excel";
-            response.AddHeader("Content-Disposition", $"attachment; filename=Incident_{incidentId}_{DateTime.Now:yyyyMMdd_HHmmss}.xls");
+            response.AddHeader("Content-Disposition", string.Format("attachment; filename=Incident_{0}_{1:yyyyMMdd_HHmmss}.xls", incidentId, DateTime.Now));
             response.Charset = "UTF-8";
             response.ContentEncoding = Encoding.UTF8;
 
@@ -277,7 +277,7 @@ public class ReportGenerator
             response.Write(sb.ToString());
             response.End();
 
-            Logger.LogInfo("ReportGenerator", $"Exported incident {incidentId} detail to Excel");
+            Logger.LogInfo("ReportGenerator", string.Format("Exported incident {0} detail to Excel", incidentId));
         }
         catch (Exception ex)
         {

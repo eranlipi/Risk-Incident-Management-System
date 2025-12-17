@@ -165,9 +165,7 @@
                 <div class="row mb-2">
                     <div class="col-12 text-right">
                         <asp:Button ID="btnRefresh" runat="server" Text="Refresh Data"
-                                    CssClass="btn btn-outline-primary" OnClick="btnRefresh_Click">
-                            <i class="fas fa-sync-alt"></i>
-                        </asp:Button>
+                                    CssClass="btn btn-outline-primary" OnClick="btnRefresh_Click" />
                         <small class="text-muted ml-2">
                             Last updated:
                             <asp:Label ID="lblLastUpdate" runat="server" Text=""></asp:Label>
