@@ -16,12 +16,18 @@ public partial class Pages_IncidentList : System.Web.UI.Page
         _incidentManager = new IncidentManager();
         _reportGenerator = new ReportGenerator();
 
+        // Wire up filter panel events - remove first to prevent duplicates
+        FilterPanel1.SearchClicked -= FilterPanel1_SearchClicked;
+        FilterPanel1.SearchClicked += FilterPanel1_SearchClicked;
+
+        FilterPanel1.ClearClicked -= FilterPanel1_ClearClicked;
+        FilterPanel1.ClearClicked += FilterPanel1_ClearClicked;
+
+        FilterPanel1.FilterChanged -= FilterPanel1_FilterChanged;
+        FilterPanel1.FilterChanged += FilterPanel1_FilterChanged;
+
         if (!IsPostBack)
         {
-            // Wire up filter panel events
-            FilterPanel1.SearchClicked += FilterPanel1_SearchClicked;
-            FilterPanel1.ClearClicked += FilterPanel1_ClearClicked;
-
             LoadIncidents();
         }
     }
@@ -91,8 +97,6 @@ public partial class Pages_IncidentList : System.Web.UI.Page
 
             lblRecordCount.Text = string.Format("{0} found", totalRecords);
             FilterPanel1.SetResultCount(totalRecords);
-
-            UpdatePanelGrid.Update();
         }
         catch (Exception ex)
         {
@@ -119,7 +123,19 @@ public partial class Pages_IncidentList : System.Web.UI.Page
         // Reset to first page
         gvIncidents.PageIndex = 0;
         LoadIncidents();
-        UpdatePanelGrid.Update();
+    }
+
+    /// <summary>
+    /// Filter changed event handler (for auto-search)
+    /// </summary>
+    private void FilterPanel1_FilterChanged(object sender, EventArgs e)
+    {
+        // Reset to first page when any filter changes
+        gvIncidents.PageIndex = 0;
+
+        // Always perform search when filters change
+        // The stored procedure will handle null/empty values appropriately
+        SearchIncidents();
     }
 
     /// <summary>
@@ -202,7 +218,6 @@ public partial class Pages_IncidentList : System.Web.UI.Page
                 {
                     ShowMessage(string.Format("Incident #{0} has been archived successfully.", incidentId));
                     LoadIncidents();
-                    UpdatePanelGrid.Update();
                 }
                 else
                 {

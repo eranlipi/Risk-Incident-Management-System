@@ -16,6 +16,9 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     // Event that fires when clear button is clicked
     public event EventHandler ClearClicked;
 
+    // Event that fires when any filter changes (for auto-search)
+    public event EventHandler FilterChanged;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         _db = new DatabaseHelper();
@@ -23,6 +26,16 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         if (!IsPostBack)
         {
             LoadFilterData();
+        }
+        else
+        {
+            // Check if the postback was triggered by the keyword textbox
+            string eventTarget = Request.Form["__EVENTTARGET"];
+            if (!string.IsNullOrEmpty(eventTarget) && eventTarget.Contains("txtKeyword"))
+            {
+                // Trigger auto-search when keyword textbox changes
+                TriggerAutoSearch();
+            }
         }
     }
 
@@ -109,9 +122,66 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
             pnlCustomDateRange.Visible = (ddlDateRange.SelectedValue == "custom");
         }
 
-        if (UpdatePanelFilter != null)
+        // Trigger auto-search when date range changes
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Department dropdown change handler
+    /// </summary>
+    protected void ddlDepartment_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Location dropdown change handler
+    /// </summary>
+    protected void ddlLocation_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Category dropdown change handler
+    /// </summary>
+    protected void ddlCategory_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Severity dropdown change handler
+    /// </summary>
+    protected void ddlSeverity_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Status dropdown change handler
+    /// </summary>
+    protected void ddlStatus_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Custom date textboxes change handler
+    /// </summary>
+    protected void txtCustomDate_TextChanged(object sender, EventArgs e)
+    {
+        TriggerAutoSearch();
+    }
+
+    /// <summary>
+    /// Triggers auto-search by raising the FilterChanged event
+    /// </summary>
+    private void TriggerAutoSearch()
+    {
+        if (FilterChanged != null)
         {
-            UpdatePanelFilter.Update();
+            FilterChanged.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -129,8 +199,8 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         if (ddlDateRange != null) ddlDateRange.SelectedIndex = 0;
         if (txtStartDate != null) txtStartDate.Text = string.Empty;
         if (txtEndDate != null) txtEndDate.Text = string.Empty;
-        if (pnlCustomDateRange != null) pnlCustomDateRange.Visible = false;
-        if (lblResultCount != null) lblResultCount.Visible = false;
+        // if (pnlCustomDateRange != null) pnlCustomDateRange.Visible = false; // Managed by JS now
+        // if (lblResultCount != null) lblResultCount.Visible = false; // Removed control
     }
 
     /// <summary>
@@ -138,11 +208,14 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     public void SetResultCount(int count)
     {
+        // Client-side filtering handles the count display now
+        /*
         if (lblResultCount != null)
         {
             lblResultCount.Text = string.Format("{0} result{1}", count, (count != 1 ? "s" : ""));
             lblResultCount.Visible = true;
         }
+        */
     }
 
     #region Properties for accessing filter values
@@ -158,9 +231,13 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             if (ddlDepartment == null) return null;
-            return string.IsNullOrEmpty(ddlDepartment.SelectedValue)
-                ? (int?)null
-                : int.Parse(ddlDepartment.SelectedValue);
+            if (string.IsNullOrEmpty(ddlDepartment.SelectedValue)) return null;
+
+            int result;
+            if (int.TryParse(ddlDepartment.SelectedValue, out result))
+                return result;
+
+            return null;
         }
         set
         {
@@ -177,9 +254,13 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             if (ddlLocation == null) return null;
-            return string.IsNullOrEmpty(ddlLocation.SelectedValue)
-                ? (int?)null
-                : int.Parse(ddlLocation.SelectedValue);
+            if (string.IsNullOrEmpty(ddlLocation.SelectedValue)) return null;
+
+            int result;
+            if (int.TryParse(ddlLocation.SelectedValue, out result))
+                return result;
+
+            return null;
         }
         set
         {
@@ -196,9 +277,13 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             if (ddlCategory == null) return null;
-            return string.IsNullOrEmpty(ddlCategory.SelectedValue)
-                ? (int?)null
-                : int.Parse(ddlCategory.SelectedValue);
+            if (string.IsNullOrEmpty(ddlCategory.SelectedValue)) return null;
+
+            int result;
+            if (int.TryParse(ddlCategory.SelectedValue, out result))
+                return result;
+
+            return null;
         }
         set
         {
@@ -215,9 +300,13 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             if (ddlSeverity == null) return null;
-            return string.IsNullOrEmpty(ddlSeverity.SelectedValue)
-                ? (int?)null
-                : int.Parse(ddlSeverity.SelectedValue);
+            if (string.IsNullOrEmpty(ddlSeverity.SelectedValue)) return null;
+
+            int result;
+            if (int.TryParse(ddlSeverity.SelectedValue, out result))
+                return result;
+
+            return null;
         }
         set
         {
