@@ -6,3 +6,18 @@ System.Threading.ThreadAbortException: Thread was being aborted.
    at System.Web.HttpResponse.Redirect(String url, Boolean endResponse, Boolean permanent)
    at Pages_IncidentForm.btnSave_Click(Object sender, EventArgs e) in c:\Users\User\Desktop\clients\datawise\Pages\IncidentForm.aspx.cs:line 229
 --------------------------------------------------------------------------------
+[2025-12-17 12:08:19] ReportGenerator.ExportIncidentsToExcel
+System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at ReportGenerator.ExportIncidentsToExcel(DataTable incidents, HttpResponse response, String filename) in C:\Users\User\Desktop\clients\datawise\App_Logic\ReportGenerator.cs:line 165
+--------------------------------------------------------------------------------
+[2025-12-17 12:08:19] IncidentList.ExportToExcel
+System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Threading.Thread.AbortInternal()
+   at System.Threading.Thread.Abort(Object stateInfo)
+   at System.Web.HttpResponse.AbortCurrentThread()
+   at ReportGenerator.ExportIncidentsToExcel(DataTable incidents, HttpResponse response, String filename) in C:\Users\User\Desktop\clients\datawise\App_Logic\ReportGenerator.cs:line 172
+   at Pages_IncidentList.btnExportExcel_Click(Object sender, EventArgs e) in c:\Users\User\Desktop\clients\datawise\Pages\IncidentList.aspx.cs:line 288
+--------------------------------------------------------------------------------

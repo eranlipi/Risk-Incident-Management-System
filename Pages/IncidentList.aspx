@@ -19,18 +19,18 @@
             </div>
         </div>
 
-        <!-- Filter Panel -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <uc:FilterPanel ID="FilterPanel1" runat="server" />
-            </div>
-        </div>
+        <asp:UpdatePanel ID="UpdatePanelMain" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <!-- Filter Panel -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <uc:FilterPanel ID="FilterPanel1" runat="server" />
+                    </div>
+                </div>
 
-        <!-- Incidents GridView -->
-        <div class="row">
-            <div class="col-12">
-                <asp:UpdatePanel ID="UpdatePanelGrid" runat="server" UpdateMode="Conditional">
-                    <ContentTemplate>
+                <!-- Incidents GridView -->
+                <div class="row">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <div class="row">
@@ -48,8 +48,8 @@
                             </div>
                             <div class="card-body p-0">
                                 <asp:GridView ID="gvIncidents" runat="server" CssClass="table table-striped table-hover mb-0"
-                                              AutoGenerateColumns="False" AllowPaging="True" AllowSorting="True"
-                                              PageSize="20" GridLines="None" EnableViewState="false"
+                                              AutoGenerateColumns="False" AllowPaging="False" AllowSorting="True"
+                                              PageSize="5000" GridLines="None" EnableViewState="false"
                                               OnPageIndexChanging="gvIncidents_PageIndexChanging"
                                               OnSorting="gvIncidents_Sorting"
                                               OnRowCommand="gvIncidents_RowCommand">
@@ -98,6 +98,9 @@
 
                                         <asp:BoundField DataField="LocationName" HeaderText="Location"
                                                         SortExpression="LocationName" />
+
+                                        <asp:BoundField DataField="CategoryName" HeaderText="Category" 
+                                                        ItemStyle-CssClass="d-none" HeaderStyle-CssClass="d-none" />
 
                                         <asp:BoundField DataField="ReportedBy" HeaderText="Reported By" />
 
@@ -160,12 +163,13 @@
                                    Visible="false"></asp:Label>
                         <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger mt-3 d-block"
                                    Visible="false"></asp:Label>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
-            </div>
-        </div>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
     </div>
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ScriptsContent" runat="server">
+    <script src="../Scripts/incident-filter.js"></script>
 </asp:Content>
