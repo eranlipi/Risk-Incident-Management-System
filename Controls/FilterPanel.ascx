@@ -116,13 +116,8 @@
                     <!-- Action Buttons -->
                     <div class="row">
                         <div class="col-12">
-                            <!-- Search button is visual only now, as filtering is instant -->
-                            <button type="button" class="btn btn-primary" disabled>
-                                🔍 Instant Search Active
-                            </button>
-                            
                             <button type="button" class="btn btn-secondary ml-2 js-btn-clear">
-                                ✖ Clear Filters
+                                 Clear Filters
                             </button>
                         </div>
                     </div>
