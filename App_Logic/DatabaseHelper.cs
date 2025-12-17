@@ -85,7 +85,7 @@ public class DatabaseHelper
         catch (SqlException ex)
         {
             Logger.LogError("DatabaseHelper.ExecuteStoredProcedure", ex);
-            throw new ApplicationException($"Database error executing {procedureName}: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Database error executing {0}: {1}", procedureName, ex.Message), ex);
         }
 
         return dt;
@@ -123,7 +123,7 @@ public class DatabaseHelper
         catch (SqlException ex)
         {
             Logger.LogError("DatabaseHelper.ExecuteStoredProcedureDataSet", ex);
-            throw new ApplicationException($"Database error executing {procedureName}: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Database error executing {0}: {1}", procedureName, ex.Message), ex);
         }
 
         return ds;
@@ -155,7 +155,7 @@ public class DatabaseHelper
         catch (SqlException ex)
         {
             Logger.LogError("DatabaseHelper.ExecuteScalar", ex);
-            throw new ApplicationException($"Database error executing {procedureName}: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Database error executing {0}: {1}", procedureName, ex.Message), ex);
         }
     }
 
@@ -185,7 +185,7 @@ public class DatabaseHelper
         catch (SqlException ex)
         {
             Logger.LogError("DatabaseHelper.ExecuteNonQuery", ex);
-            throw new ApplicationException($"Database error executing {procedureName}: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Database error executing {0}: {1}", procedureName, ex.Message), ex);
         }
     }
 
@@ -224,7 +224,7 @@ public class DatabaseHelper
         catch (SqlException ex)
         {
             Logger.LogError("DatabaseHelper.ExecuteWithOutputParameter", ex);
-            throw new ApplicationException($"Database error executing {procedureName}: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Database error executing {0}: {1}", procedureName, ex.Message), ex);
         }
     }
 
@@ -381,8 +381,8 @@ public static class Logger
                 System.IO.Directory.CreateDirectory(_logPath);
             }
 
-            string logFile = System.IO.Path.Combine(_logPath, $"ErrorLog_{DateTime.Now:yyyyMMdd}.txt");
-            string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {source}\n{ex.ToString()}\n{new string('-', 80)}\n";
+            string logFile = System.IO.Path.Combine(_logPath, string.Format("ErrorLog_{0}.txt", DateTime.Now.ToString("yyyyMMdd")));
+            string logMessage = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + source + "\n" + ex.ToString() + "\n" + new string('-', 80) + "\n";
 
             System.IO.File.AppendAllText(logFile, logMessage);
         }
@@ -404,8 +404,8 @@ public static class Logger
                 System.IO.Directory.CreateDirectory(_logPath);
             }
 
-            string logFile = System.IO.Path.Combine(_logPath, $"InfoLog_{DateTime.Now:yyyyMMdd}.txt");
-            string logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {source}: {message}\n";
+            string logFile = System.IO.Path.Combine(_logPath, string.Format("InfoLog_{0}.txt", DateTime.Now.ToString("yyyyMMdd")));
+            string logMessage = "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + source + ": " + message + "\n";
 
             System.IO.File.AppendAllText(logFile, logMessage);
         }

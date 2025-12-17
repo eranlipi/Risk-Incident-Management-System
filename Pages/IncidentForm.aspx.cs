@@ -129,7 +129,7 @@ public partial class Pages_IncidentForm : System.Web.UI.Page
             }
 
             // Set info panel
-            lblIncidentId.Text = $"#{_incidentId}";
+            lblIncidentId.Text = string.Format("#{0}", _incidentId);
             lblCreatedDate.Text = Convert.ToDateTime(incident["CreatedDate"]).ToString("MMM dd, yyyy HH:mm");
             lblLastModified.Text = Convert.ToDateTime(incident["LastModifiedDate"]).ToString("MMM dd, yyyy HH:mm");
             lblReportedBy.Text = incident["ReportedBy"].ToString();
@@ -223,10 +223,10 @@ public partial class Pages_IncidentForm : System.Web.UI.Page
                     estimatedCost: estimatedCost
                 );
 
-                ShowSuccess($"Incident #{newIncidentId} created successfully.");
+                ShowSuccess(string.Format("Incident #{0} created successfully.", newIncidentId));
 
                 // Redirect to edit mode
-                Response.Redirect($"IncidentForm.aspx?id={newIncidentId}&mode=edit");
+                Response.Redirect(string.Format("IncidentForm.aspx?id={0}&mode=edit", newIncidentId));
             }
             else if (_mode == "edit")
             {
@@ -259,7 +259,7 @@ public partial class Pages_IncidentForm : System.Web.UI.Page
         catch (Exception ex)
         {
             Logger.LogError("IncidentForm.btnSave_Click", ex);
-            ShowError($"Error saving incident: {ex.Message}");
+            ShowError(string.Format("Error saving incident: {0}", ex.Message));
         }
     }
 

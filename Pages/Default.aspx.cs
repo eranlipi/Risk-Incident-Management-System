@@ -107,37 +107,45 @@ public partial class Pages_Default : System.Web.UI.Page
 
         // Incidents by Month
         DataTable dtByMonth = _incidentManager.GetIncidentsByMonth(6);
+        var monthLabels = dtByMonth.Rows.Cast<DataRow>().Select(r => r["MonthName"].ToString()).ToArray();
+        var monthCounts = dtByMonth.Rows.Cast<DataRow>().Select(r => Convert.ToInt32(r["IncidentCount"]) ).ToArray();
         var monthData = new
         {
-            labels = dtByMonth.AsEnumerable().Select(r => r.Field<string>("MonthName")).ToArray(),
-            data = dtByMonth.AsEnumerable().Select(r => r.Field<int>("IncidentCount")).ToArray()
+            labels = monthLabels,
+            data = monthCounts
         };
         hfIncidentsByMonth.Value = serializer.Serialize(monthData);
 
         // Incidents by Department
         DataTable dtByDepartment = _incidentManager.GetIncidentsByDepartment();
+        var deptLabels = dtByDepartment.Rows.Cast<DataRow>().Select(r => r["DepartmentName"].ToString()).ToArray();
+        var deptCounts = dtByDepartment.Rows.Cast<DataRow>().Select(r => Convert.ToInt32(r["IncidentCount"]) ).ToArray();
         var deptData = new
         {
-            labels = dtByDepartment.AsEnumerable().Select(r => r.Field<string>("DepartmentName")).ToArray(),
-            data = dtByDepartment.AsEnumerable().Select(r => r.Field<int>("IncidentCount")).ToArray()
+            labels = deptLabels,
+            data = deptCounts
         };
         hfIncidentsByDepartment.Value = serializer.Serialize(deptData);
 
         // Incidents by Severity
         DataTable dtBySeverity = _incidentManager.GetIncidentsBySeverity();
+        var severityLabels = dtBySeverity.Rows.Cast<DataRow>().Select(r => r["SeverityLabel"].ToString()).ToArray();
+        var severityCounts = dtBySeverity.Rows.Cast<DataRow>().Select(r => Convert.ToInt32(r["IncidentCount"]) ).ToArray();
         var severityData = new
         {
-            labels = dtBySeverity.AsEnumerable().Select(r => r.Field<string>("SeverityLabel")).ToArray(),
-            data = dtBySeverity.AsEnumerable().Select(r => r.Field<int>("IncidentCount")).ToArray()
+            labels = severityLabels,
+            data = severityCounts
         };
         hfIncidentsBySeverity.Value = serializer.Serialize(severityData);
 
         // Top Categories
         DataTable dtTopCategories = _incidentManager.GetTopCategories(5);
+        var categoryLabels = dtTopCategories.Rows.Cast<DataRow>().Select(r => r["CategoryName"].ToString()).ToArray();
+        var categoryCounts = dtTopCategories.Rows.Cast<DataRow>().Select(r => Convert.ToInt32(r["IncidentCount"]) ).ToArray();
         var categoryData = new
         {
-            labels = dtTopCategories.AsEnumerable().Select(r => r.Field<string>("CategoryName")).ToArray(),
-            data = dtTopCategories.AsEnumerable().Select(r => r.Field<int>("IncidentCount")).ToArray()
+            labels = categoryLabels,
+            data = categoryCounts
         };
         hfTopCategories.Value = serializer.Serialize(categoryData);
     }
@@ -169,6 +177,32 @@ public partial class Pages_Default : System.Web.UI.Page
     {
         int severityValue = Convert.ToInt32(severity);
         return IncidentManager.GetSeverityClass(severityValue);
+    }
+
+    /// <summary>
+    /// Returns severity label for binding in markup
+    /// </summary>
+    protected string GetSeverityLabel(object severity)
+    {
+        if (severity == null || severity == DBNull.Value)
+            return "Unknown";
+
+        int sev;
+        if (!Int32.TryParse(severity.ToString(), out sev))
+            return "Unknown";
+
+        return IncidentManager.GetSeverityLabel(sev);
+    }
+
+    /// <summary>
+    /// Returns status CSS class for binding in markup
+    /// </summary>
+    protected string GetStatusClass(object status)
+    {
+        if (status == null || status == DBNull.Value)
+            return "badge-light";
+
+        return IncidentManager.GetStatusClass(status.ToString());
     }
 
     /// <summary>

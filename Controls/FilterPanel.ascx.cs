@@ -35,27 +35,36 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         {
             // Load Departments
             DataTable departments = _db.GetDepartments();
-            ddlDepartment.DataSource = departments;
-            ddlDepartment.DataTextField = "DepartmentName";
-            ddlDepartment.DataValueField = "DepartmentID";
-            ddlDepartment.DataBind();
-            ddlDepartment.Items.Insert(0, new ListItem("All Departments", ""));
+            if (ddlDepartment != null)
+            {
+                ddlDepartment.DataSource = departments;
+                ddlDepartment.DataTextField = "DepartmentName";
+                ddlDepartment.DataValueField = "DepartmentID";
+                ddlDepartment.DataBind();
+                ddlDepartment.Items.Insert(0, new ListItem("All Departments", ""));
+            }
 
             // Load Locations
             DataTable locations = _db.GetLocations();
-            ddlLocation.DataSource = locations;
-            ddlLocation.DataTextField = "LocationName";
-            ddlLocation.DataValueField = "LocationID";
-            ddlLocation.DataBind();
-            ddlLocation.Items.Insert(0, new ListItem("All Locations", ""));
+            if (ddlLocation != null)
+            {
+                ddlLocation.DataSource = locations;
+                ddlLocation.DataTextField = "LocationName";
+                ddlLocation.DataValueField = "LocationID";
+                ddlLocation.DataBind();
+                ddlLocation.Items.Insert(0, new ListItem("All Locations", ""));
+            }
 
             // Load Categories
             DataTable categories = _db.GetCategories();
-            ddlCategory.DataSource = categories;
-            ddlCategory.DataTextField = "CategoryName";
-            ddlCategory.DataValueField = "CategoryID";
-            ddlCategory.DataBind();
-            ddlCategory.Items.Insert(0, new ListItem("All Categories", ""));
+            if (ddlCategory != null)
+            {
+                ddlCategory.DataSource = categories;
+                ddlCategory.DataTextField = "CategoryName";
+                ddlCategory.DataValueField = "CategoryID";
+                ddlCategory.DataBind();
+                ddlCategory.Items.Insert(0, new ListItem("All Categories", ""));
+            }
         }
         catch (Exception ex)
         {
@@ -70,7 +79,10 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         // Raise the SearchClicked event
-        SearchClicked?.Invoke(this, EventArgs.Empty);
+        if (SearchClicked != null)
+        {
+            SearchClicked.Invoke(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>
@@ -81,7 +93,10 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         ClearFilters();
 
         // Raise the ClearClicked event
-        ClearClicked?.Invoke(this, EventArgs.Empty);
+        if (ClearClicked != null)
+        {
+            ClearClicked.Invoke(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>
@@ -89,8 +104,15 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     protected void ddlDateRange_SelectedIndexChanged(object sender, EventArgs e)
     {
-        pnlCustomDateRange.Visible = (ddlDateRange.SelectedValue == "custom");
-        UpdatePanelFilter.Update();
+        if (pnlCustomDateRange != null && ddlDateRange != null)
+        {
+            pnlCustomDateRange.Visible = (ddlDateRange.SelectedValue == "custom");
+        }
+
+        if (UpdatePanelFilter != null)
+        {
+            UpdatePanelFilter.Update();
+        }
     }
 
     /// <summary>
@@ -98,17 +120,17 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     public void ClearFilters()
     {
-        txtKeyword.Text = string.Empty;
-        ddlDepartment.SelectedIndex = 0;
-        ddlLocation.SelectedIndex = 0;
-        ddlCategory.SelectedIndex = 0;
-        ddlSeverity.SelectedIndex = 0;
-        ddlStatus.SelectedIndex = 0;
-        ddlDateRange.SelectedIndex = 0;
-        txtStartDate.Text = string.Empty;
-        txtEndDate.Text = string.Empty;
-        pnlCustomDateRange.Visible = false;
-        lblResultCount.Visible = false;
+        if (txtKeyword != null) txtKeyword.Text = string.Empty;
+        if (ddlDepartment != null) ddlDepartment.SelectedIndex = 0;
+        if (ddlLocation != null) ddlLocation.SelectedIndex = 0;
+        if (ddlCategory != null) ddlCategory.SelectedIndex = 0;
+        if (ddlSeverity != null) ddlSeverity.SelectedIndex = 0;
+        if (ddlStatus != null) ddlStatus.SelectedIndex = 0;
+        if (ddlDateRange != null) ddlDateRange.SelectedIndex = 0;
+        if (txtStartDate != null) txtStartDate.Text = string.Empty;
+        if (txtEndDate != null) txtEndDate.Text = string.Empty;
+        if (pnlCustomDateRange != null) pnlCustomDateRange.Visible = false;
+        if (lblResultCount != null) lblResultCount.Visible = false;
     }
 
     /// <summary>
@@ -116,28 +138,33 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     public void SetResultCount(int count)
     {
-        lblResultCount.Text = $"{count} result{(count != 1 ? "s" : "")}";
-        lblResultCount.Visible = true;
+        if (lblResultCount != null)
+        {
+            lblResultCount.Text = string.Format("{0} result{1}", count, (count != 1 ? "s" : ""));
+            lblResultCount.Visible = true;
+        }
     }
 
     #region Properties for accessing filter values
 
     public string Keyword
     {
-        get { return txtKeyword.Text.Trim(); }
-        set { txtKeyword.Text = value; }
+        get { return txtKeyword != null ? txtKeyword.Text.Trim() : string.Empty; }
+        set { if (txtKeyword != null) txtKeyword.Text = value; }
     }
 
     public int? DepartmentId
     {
         get
         {
+            if (ddlDepartment == null) return null;
             return string.IsNullOrEmpty(ddlDepartment.SelectedValue)
                 ? (int?)null
                 : int.Parse(ddlDepartment.SelectedValue);
         }
         set
         {
+            if (ddlDepartment == null) return;
             if (value.HasValue)
                 ddlDepartment.SelectedValue = value.Value.ToString();
             else
@@ -149,12 +176,14 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     {
         get
         {
+            if (ddlLocation == null) return null;
             return string.IsNullOrEmpty(ddlLocation.SelectedValue)
                 ? (int?)null
                 : int.Parse(ddlLocation.SelectedValue);
         }
         set
         {
+            if (ddlLocation == null) return;
             if (value.HasValue)
                 ddlLocation.SelectedValue = value.Value.ToString();
             else
@@ -166,12 +195,14 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     {
         get
         {
+            if (ddlCategory == null) return null;
             return string.IsNullOrEmpty(ddlCategory.SelectedValue)
                 ? (int?)null
                 : int.Parse(ddlCategory.SelectedValue);
         }
         set
         {
+            if (ddlCategory == null) return;
             if (value.HasValue)
                 ddlCategory.SelectedValue = value.Value.ToString();
             else
@@ -183,12 +214,14 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     {
         get
         {
+            if (ddlSeverity == null) return null;
             return string.IsNullOrEmpty(ddlSeverity.SelectedValue)
                 ? (int?)null
                 : int.Parse(ddlSeverity.SelectedValue);
         }
         set
         {
+            if (ddlSeverity == null) return;
             if (value.HasValue)
                 ddlSeverity.SelectedValue = value.Value.ToString();
             else
@@ -198,8 +231,8 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
 
     public string Status
     {
-        get { return ddlStatus.SelectedValue; }
-        set { ddlStatus.SelectedValue = value; }
+        get { return ddlStatus != null ? ddlStatus.SelectedValue : string.Empty; }
+        set { if (ddlStatus != null) ddlStatus.SelectedValue = value; }
     }
 
     public DateTime? StartDate
@@ -207,7 +240,7 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             DateTime result;
-            if (ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtStartDate.Text, out result))
+            if (ddlDateRange != null && txtStartDate != null && ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtStartDate.Text, out result))
                 return result;
 
             return GetStartDateFromRange();
@@ -219,7 +252,7 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
         get
         {
             DateTime result;
-            if (ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtEndDate.Text, out result))
+            if (ddlDateRange != null && txtEndDate != null && ddlDateRange.SelectedValue == "custom" && DateTime.TryParse(txtEndDate.Text, out result))
                 return result;
 
             return GetEndDateFromRange();
@@ -231,6 +264,8 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     private DateTime? GetStartDateFromRange()
     {
+        if (ddlDateRange == null) return null;
+
         switch (ddlDateRange.SelectedValue)
         {
             case "today":
@@ -253,6 +288,8 @@ public partial class Controls_FilterPanel : System.Web.UI.UserControl
     /// </summary>
     private DateTime? GetEndDateFromRange()
     {
+        if (ddlDateRange == null) return null;
+
         if (ddlDateRange.SelectedValue != "all")
             return DateTime.Now;
 

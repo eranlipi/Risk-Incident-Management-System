@@ -51,7 +51,7 @@ public class IncidentManager
 
         if (dt.Rows.Count == 0)
         {
-            throw new ApplicationException($"Incident with ID {incidentId} not found.");
+            throw new ApplicationException(string.Format("Incident with ID {0} not found.", incidentId));
         }
 
         return dt.Rows[0];
@@ -108,7 +108,7 @@ public class IncidentManager
             try
             {
                 _notificationService.SendCriticalIncidentAlert(newIncidentId, title, severity, departmentId);
-                Logger.LogInfo("IncidentManager.CreateIncident", $"Notification sent for incident {newIncidentId}");
+                Logger.LogInfo("IncidentManager.CreateIncident", string.Format("Notification sent for incident {0}", newIncidentId));
             }
             catch (Exception ex)
             {
@@ -506,7 +506,8 @@ public class IncidentManager
     /// </summary>
     public static string GetStatusClass(string status)
     {
-        switch (status?.ToLower())
+        string statusLower = status != null ? status.ToLower() : null;
+        switch (statusLower)
         {
             case "open":
                 return "badge-danger";

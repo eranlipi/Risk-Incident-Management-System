@@ -5,6 +5,8 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Data.SqlClient;
+using System.Collections.Generic;
 
 /// <summary>
 /// Notification Service - Handles email notifications
@@ -59,13 +61,13 @@ public class NotificationService
             DataRow incident = GetIncidentDetails(incidentId);
 
             // Build email
-            string subject = $"CRITICAL INCIDENT ALERT - Severity {severity}: {title}";
+            string subject = string.Format("CRITICAL INCIDENT ALERT - Severity {0}: {1}", severity, title);
             string body = BuildCriticalIncidentEmail(incident);
 
             // Send email
             SendEmail(recipients, subject, body, isHtml: true);
 
-            Logger.LogInfo("NotificationService", $"Critical incident alert sent for incident {incidentId}");
+            Logger.LogInfo("NotificationService", string.Format("Critical incident alert sent for incident {0}", incidentId));
         }
         catch (Exception ex)
         {
@@ -104,10 +106,10 @@ public class NotificationService
         sb.AppendFormat("<div class='field'><span class='label'>Title:</span> <span class='value'>{0}</span></div>",
             Server.HtmlEncode(incident["Title"].ToString()));
 
-        int severity = Convert.ToInt32(incident["Severity"]);
-        string severityClass = severity >= 5 ? "severity-critical" : "severity-high";
+        int sev = Convert.ToInt32(incident["Severity"]);
+        string severityClass = sev >= 5 ? "severity-critical" : "severity-high";
         sb.AppendFormat("<div class='field'><span class='label'>Severity:</span> <span class='severity-badge {0}'>{1} - {2}</span></div>",
-            severityClass, severity, IncidentManager.GetSeverityLabel(severity));
+            severityClass, sev, IncidentManager.GetSeverityLabel(sev));
 
         sb.AppendFormat("<div class='field'><span class='label'>Date:</span> <span class='value'>{0:MMM dd, yyyy HH:mm}</span></div>",
             incident["IncidentDate"]);
@@ -152,7 +154,7 @@ public class NotificationService
 
         if (dt.Rows.Count == 0)
         {
-            throw new ApplicationException($"Incident {incidentId} not found.");
+            throw new ApplicationException(string.Format("Incident {0} not found.", incidentId));
         }
 
         return dt.Rows[0];
@@ -179,7 +181,7 @@ public class NotificationService
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                Logger.LogInfo("NotificationService", $"No email found for user {assignedToUserId}");
+                Logger.LogInfo("NotificationService", string.Format("No email found for user {0}", assignedToUserId));
                 return;
             }
 
@@ -190,7 +192,7 @@ public class NotificationService
             // Send email async to avoid blocking
             Task.Run(() => SendEmail(userEmail, subject, body, isHtml: true));
 
-            Logger.LogInfo("NotificationService", $"Action assignment notification sent for action {actionId}");
+            Logger.LogInfo("NotificationService", string.Format("Action assignment notification sent for action {0}", actionId));
         }
         catch (Exception ex)
         {
@@ -264,24 +266,39 @@ public class NotificationService
                 return;
             }
 
-            // Group by assignee
-            var groupedActions = overdueActions.AsEnumerable()
-                .GroupBy(row => new
-                {
-                    UserId = row.Field<int>("AssignedToUserID"),
-                    Email = row.Field<string>("AssigneeEmail"),
-                    Name = row.Field<string>("AssignedTo")
-                });
+            // Group by assignee (manual grouping to avoid LINQ/DataSetExtensions dependency)
+            var grouped = new Dictionary<string, List<DataRow>>();
+            var keyInfo = new Dictionary<string, Tuple<string, string>>(); // key -> (email, name)
 
-            foreach (var group in groupedActions)
+            foreach (DataRow row in overdueActions.Rows)
             {
-                string subject = $"Overdue Actions Reminder - {group.Count()} Action(s)";
-                string body = BuildOverdueActionsEmail(group.Key.Name, group.ToList());
+                string email = row["AssigneeEmail"] == DBNull.Value ? null : row["AssigneeEmail"].ToString();
+                string name = row["AssignedTo"] == DBNull.Value ? string.Empty : row["AssignedTo"].ToString();
+                string userIdStr = row["AssignedToUserID"] == DBNull.Value ? string.Empty : row["AssignedToUserID"].ToString();
 
-                Task.Run(() => SendEmail(group.Key.Email, subject, body, isHtml: true));
+                string key = (email ?? userIdStr).ToLowerInvariant();
+
+                if (!grouped.ContainsKey(key))
+                {
+                    grouped[key] = new List<DataRow>();
+                    keyInfo[key] = Tuple.Create(email, name);
+                }
+
+                grouped[key].Add(row);
             }
 
-            Logger.LogInfo("NotificationService", $"Overdue actions digest sent to {groupedActions.Count()} users");
+            foreach (var kvp in grouped)
+            {
+                var info = keyInfo[kvp.Key];
+                List<DataRow> actions = kvp.Value;
+
+                string subject = string.Format("Overdue Actions Reminder - {0} Action(s)", actions.Count);
+                string body = BuildOverdueActionsEmail(info.Item2, actions);
+
+                Task.Run(() => SendEmail(info.Item1, subject, body, isHtml: true));
+            }
+
+            Logger.LogInfo("NotificationService", string.Format("Overdue actions digest sent to {0} users", grouped.Count));
         }
         catch (Exception ex)
         {
@@ -373,12 +390,12 @@ public class NotificationService
                 }
             }
 
-            Logger.LogInfo("NotificationService", $"Email sent successfully to {to}");
+            Logger.LogInfo("NotificationService", string.Format("Email sent successfully to {0}", to));
         }
         catch (Exception ex)
         {
             Logger.LogError("NotificationService.SendEmail", ex);
-            throw new ApplicationException($"Failed to send email: {ex.Message}", ex);
+            throw new ApplicationException(string.Format("Failed to send email: {0}", ex.Message), ex);
         }
     }
 
@@ -398,7 +415,7 @@ public class NotificationService
 
         DataTable users = _db.ExecuteStoredProcedure("sp_GetUsers", parameters);
 
-        DataRow[] userRows = users.Select($"UserID = {userId}");
+        DataRow[] userRows = users.Select(string.Format("UserID = {0}", userId));
 
         if (userRows.Length > 0)
         {

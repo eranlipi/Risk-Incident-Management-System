@@ -27,13 +27,13 @@ public partial class Controls_IncidentSummary : System.Web.UI.UserControl
         _severity = Convert.ToInt32(incidentRow["Severity"]);
         _status = incidentRow["Status"].ToString();
 
-        lblIncidentId.Text = $"#{_incidentId}";
+        lblIncidentId.Text = string.Format("#{0}", _incidentId);
         lblTitle.Text = incidentRow["Title"].ToString();
         lblIncidentDate.Text = Convert.ToDateTime(incidentRow["IncidentDate"]).ToString("MMM dd, yyyy");
         lblDepartment.Text = incidentRow["DepartmentName"].ToString();
         lblLocation.Text = incidentRow["LocationName"].ToString();
         lblCategory.Text = incidentRow["CategoryName"].ToString();
-        lblSeverity.Text = $"{_severity} - {IncidentManager.GetSeverityLabel(_severity)}";
+        lblSeverity.Text = string.Format("{0} - {1}", _severity, IncidentManager.GetSeverityLabel(_severity));
         lblStatus.Text = _status;
         lblReportedBy.Text = incidentRow["ReportedBy"].ToString();
 
@@ -51,8 +51,8 @@ public partial class Controls_IncidentSummary : System.Web.UI.UserControl
         }
 
         // Set navigation links
-        lnkViewDetails.NavigateUrl = $"~/Pages/IncidentForm.aspx?id={_incidentId}&mode=view";
-        lnkEdit.NavigateUrl = $"~/Pages/IncidentForm.aspx?id={_incidentId}&mode=edit";
+        lnkViewDetails.NavigateUrl = string.Format("~/Pages/IncidentForm.aspx?id={0}&mode=view", _incidentId);
+        lnkEdit.NavigateUrl = string.Format("~/Pages/IncidentForm.aspx?id={0}&mode=edit", _incidentId);
     }
 
     /// <summary>

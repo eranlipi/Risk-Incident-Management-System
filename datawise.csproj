@@ -30,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,17 +40,24 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
@@ -61,6 +69,21 @@
     <Content Include="Controls\IncidentSummary.ascx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\FilterPanel.ascx.designer.cs">
+      <DependentUpon>FilterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IncidentSummary.ascx.designer.cs">
+      <DependentUpon>IncidentSummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IncidentForm.aspx.designer.cs">
+      <DependentUpon>IncidentForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IncidentList.aspx.designer.cs">
+      <DependentUpon>IncidentList.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -85,10 +108,10 @@
       <DependentUpon>IncidentSummary.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="App_Code\DatabaseHelper.cs" />
-    <Compile Include="App_Code\IncidentManager.cs" />
-    <Compile Include="App_Code\NotificationService.cs" />
-    <Compile Include="App_Code\ReportGenerator.cs" />
+    <Compile Include="App_Logic\DatabaseHelper.cs" />
+    <Compile Include="App_Logic\IncidentManager.cs" />
+    <Compile Include="App_Logic\NotificationService.cs" />
+    <Compile Include="App_Logic\ReportGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

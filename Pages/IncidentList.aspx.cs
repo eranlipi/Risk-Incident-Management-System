@@ -36,8 +36,8 @@ public partial class Pages_IncidentList : System.Web.UI.Page
             DataTable dtIncidents = _incidentManager.GetAllIncidents(
                 pageNumber: gvIncidents.PageIndex + 1,
                 pageSize: gvIncidents.PageSize,
-                sortColumn: ViewState["SortColumn"]?.ToString() ?? "IncidentDate",
-                sortDirection: ViewState["SortDirection"]?.ToString() ?? "DESC"
+                sortColumn: ViewState["SortColumn"] != null ? ViewState["SortColumn"].ToString() : "IncidentDate",
+                sortDirection: ViewState["SortDirection"] != null ? ViewState["SortDirection"].ToString() : "DESC"
             );
 
             gvIncidents.DataSource = dtIncidents;
@@ -47,7 +47,7 @@ public partial class Pages_IncidentList : System.Web.UI.Page
             if (dtIncidents.Rows.Count > 0)
             {
                 int totalRecords = Convert.ToInt32(dtIncidents.Rows[0]["TotalRecords"]);
-                lblRecordCount.Text = $"{totalRecords} total";
+                lblRecordCount.Text = string.Format("{0} total", totalRecords);
             }
             else
             {
@@ -89,7 +89,7 @@ public partial class Pages_IncidentList : System.Web.UI.Page
                 ? Convert.ToInt32(dtIncidents.Rows[0]["TotalRecords"])
                 : 0;
 
-            lblRecordCount.Text = $"{totalRecords} found";
+            lblRecordCount.Text = string.Format("{0} found", totalRecords);
             FilterPanel1.SetResultCount(totalRecords);
 
             UpdatePanelGrid.Update();
@@ -150,8 +150,8 @@ public partial class Pages_IncidentList : System.Web.UI.Page
     /// </summary>
     protected void gvIncidents_Sorting(object sender, GridViewSortEventArgs e)
     {
-        string currentSortColumn = ViewState["SortColumn"]?.ToString();
-        string currentSortDirection = ViewState["SortDirection"]?.ToString() ?? "ASC";
+        string currentSortColumn = ViewState["SortColumn"] != null ? ViewState["SortColumn"].ToString() : null;
+        string currentSortDirection = ViewState["SortDirection"] != null ? ViewState["SortDirection"].ToString() : "ASC";
 
         // Toggle sort direction if same column
         if (currentSortColumn == e.SortExpression)
@@ -200,7 +200,7 @@ public partial class Pages_IncidentList : System.Web.UI.Page
 
                 if (success)
                 {
-                    ShowMessage($"Incident #{incidentId} has been archived successfully.");
+                    ShowMessage(string.Format("Incident #{0} has been archived successfully.", incidentId));
                     LoadIncidents();
                     UpdatePanelGrid.Update();
                 }
@@ -261,7 +261,7 @@ public partial class Pages_IncidentList : System.Web.UI.Page
         catch (Exception ex)
         {
             Logger.LogError("IncidentList.ExportToExcel", ex);
-            ShowError($"Error exporting to Excel: {ex.Message}");
+            ShowError(string.Format("Error exporting to Excel: {0}", ex.Message));
         }
     }
 
