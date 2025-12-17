@@ -12,6 +12,16 @@ public partial class SiteMaster : System.Web.UI.MasterPage
         {
             // Set active navigation menu item based on current page
             HighlightActiveMenuItem();
+
+            // Check for user session
+            if (Session["UserName"] != null)
+            {
+                lblUserName.Text = Session["UserName"].ToString();
+            }
+            else
+            {
+                lblUserName.Text = "Guest";
+            }
         }
     }
 

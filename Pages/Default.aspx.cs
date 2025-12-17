@@ -18,6 +18,29 @@ public partial class Pages_Default : System.Web.UI.Page
         if (!IsPostBack)
         {
             LoadDashboardData();
+            UpdateWelcomeMessage();
+        }
+    }
+
+    private void UpdateWelcomeMessage()
+    {
+        if (Session["UserName"] != null)
+        {
+            lblWelcomeName.Text = Session["UserName"].ToString();
+        }
+        else
+        {
+            lblWelcomeName.Text = "Guest";
+        }
+    }
+
+    protected void btnSetUser_Click(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(txtUserName.Text))
+        {
+            Session["UserName"] = txtUserName.Text.Trim();
+            // Refresh the page to update Master page and local label
+            Response.Redirect(Request.RawUrl);
         }
     }
 
@@ -157,8 +180,18 @@ public partial class Pages_Default : System.Web.UI.Page
     {
         DataTable dtIncidents = _incidentManager.GetAllIncidents(pageNumber: 1, pageSize: 10, sortColumn: "IncidentDate", sortDirection: "DESC");
 
-        gvRecentIncidents.DataSource = dtIncidents;
-        gvRecentIncidents.DataBind();
+        if (dtIncidents != null && dtIncidents.Rows.Count > 0)
+        {
+            rptRecentIncidents.DataSource = dtIncidents;
+            rptRecentIncidents.DataBind();
+            rptRecentIncidents.Visible = true;
+            pnlNoIncidents.Visible = false;
+        }
+        else
+        {
+            rptRecentIncidents.Visible = false;
+            pnlNoIncidents.Visible = true;
+        }
     }
 
     /// <summary>

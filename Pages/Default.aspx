@@ -30,6 +30,27 @@
             </div>
         </div>
 
+        <!-- Session Demo -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-light border-0">
+                    <div class="card-body py-3">
+                        <div class="form-inline">
+                            <span class="mr-2">Welcome, <strong><asp:Label ID="lblWelcomeName" runat="server" Text="Guest"></asp:Label></strong>!</span>
+                            <span class="text-muted mr-3 small border-right pr-3">Session Demo</span>
+                            
+                            <div class="input-group input-group-sm">
+                                <asp:TextBox ID="txtUserName" runat="server" CssClass="form-control" placeholder="Enter your name"></asp:TextBox>
+                                <div class="input-group-append">
+                                    <asp:Button ID="btnSetUser" runat="server" Text="Set User" CssClass="btn btn-primary" OnClick="btnSetUser_Click" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- KPI Cards -->
         <asp:UpdatePanel ID="UpdatePanelMetrics" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
@@ -248,29 +269,39 @@
                         <h5><i class="fas fa-history"></i> Recent Incidents</h5>
                     </div>
                     <div class="card-body">
-                        <asp:GridView ID="gvRecentIncidents" runat="server" CssClass="table table-striped table-hover"
-                                      AutoGenerateColumns="False" GridLines="None" EnableViewState="false">
-                            <Columns>
-                                <asp:BoundField DataField="IncidentID" HeaderText="ID" ItemStyle-Width="60px" />
-                                <asp:BoundField DataField="Title" HeaderText="Title" />
-                                <asp:TemplateField HeaderText="Severity">
-                                    <ItemTemplate>
+                        <asp:Repeater ID="rptRecentIncidents" runat="server">
+                            <HeaderTemplate>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 60px;">ID</th>
+                                            <th>Title</th>
+                                            <th>Severity</th>
+                                            <th>Date</th>
+                                            <th>Department</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            </HeaderTemplate>
+                            <ItemTemplate>
+                                <tr>
+                                    <td><%# Eval("IncidentID") %></td>
+                                    <td><%# Eval("Title") %></td>
+                                    <td>
                                         <span class='<%# GetSeverityBadgeClass(Eval("Severity")) %>'>
                                             <%# Eval("Severity") %> - <%# IncidentManager.GetSeverityLabel(Convert.ToInt32(Eval("Severity"))) %>
                                         </span>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:BoundField DataField="IncidentDate" HeaderText="Date" DataFormatString="{0:MMM dd, yyyy}" />
-                                <asp:BoundField DataField="DepartmentName" HeaderText="Department" />
-                                <asp:TemplateField HeaderText="Status">
-                                    <ItemTemplate>
+                                    </td>
+                                    <td><%# Eval("IncidentDate", "{0:MMM dd, yyyy}") %></td>
+                                    <td><%# Eval("DepartmentName") %></td>
+                                    <td>
                                         <span class='<%# IncidentManager.GetStatusClass(Eval("Status").ToString()) %>'>
                                             <%# Eval("Status") %>
                                         </span>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:TemplateField HeaderText="Actions">
-                                    <ItemTemplate>
+                                    </td>
+                                    <td>
                                         <button type="button" class="btn btn-sm btn-outline-primary view-incident-btn" 
                                                 data-id='<%# Eval("IncidentID") %>'
                                                 data-title='<%# Eval("Title") %>'
@@ -285,13 +316,17 @@
                                                 title="View">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                            </Columns>
-                            <EmptyDataTemplate>
-                                <div class="alert alert-info">No recent incidents to display.</div>
-                            </EmptyDataTemplate>
-                        </asp:GridView>
+                                    </td>
+                                </tr>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                    </tbody>
+                                </table>
+                            </FooterTemplate>
+                        </asp:Repeater>
+                        <asp:Panel ID="pnlNoIncidents" runat="server" Visible="false">
+                            <div class="alert alert-info">No recent incidents to display.</div>
+                        </asp:Panel>
                     </div>
                 </div>
             </div>
