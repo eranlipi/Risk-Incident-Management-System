@@ -1,367 +1,70 @@
-# Risk & Incident Management System
+# Incident Management System
 
-## Overview
+DataWise is a comprehensive web application built with ASP.NET Web Forms for tracking, managing, and analyzing organizational incidents. It provides a centralized platform for incident reporting, corrective action management, and data-driven insights to improve safety and operational efficiency.
 
-This project implements a comprehensive incident tracking and risk management solution for workplace safety officers. The system addresses the critical need to move from paper-based or spreadsheet-based incident reporting to a centralized, digital platform that enables real-time tracking, trend analysis, and proactive risk mitigation.
+## Features
 
-## Business Context
+- **Dashboard & Analytics**: A central dashboard with KPIs, charts, and visualizations for a quick overview of incident metrics.
+- **Incident Reporting**: A detailed form to create and manage incidents, capturing essential information like severity, location, department, and description.
+- **Dynamic Filtering & Search**: Robust filtering and search capabilities on the incident list page.
+- **Data Export**: Export incident data to Excel for external analysis and reporting.
+- **Email Notifications**: Automated email alerts for critical incidents and new assignments.
 
-Safety officers face several operational challenges:
-- Incident data scattered across multiple Excel files and paper forms
-- Difficulty identifying patterns and recurring safety issues
-- Manual report generation for regulatory compliance
-- Delayed notification of critical incidents to management
-- No systematic approach to tracking corrective actions
+## Technical Architecture
 
-This system provides a single source of truth for all safety incidents, enabling data-driven decision making and improved workplace safety outcomes.
+The application follows a traditional n-tier architecture:
 
-## Technical Stack
+-   **Presentation Layer (UI)**: Built with ASP.NET Web Forms (`.aspx` pages and `.ascx` user controls). The UI is responsible for rendering data and capturing user input.
+-   **Business Logic Layer (BLL)**: Encapsulated in `App_Logic/IncidentManager.cs`, this layer contains the core business rules, logic, and orchestrates data flow between the UI and the data layer.
+-   **Data Access Layer (DAL)**: The `App_Logic/DatabaseHelper.cs` class manages all database interactions using stored procedures for enhanced security and performance.
+-   **Database**: A SQL Server database serves as the data store. All schema, stored procedures, and initial data are defined in the `App_Data` directory.
 
-- **Framework**: ASP.NET Web Forms (.NET Framework 4.7.2+)
-- **Database**: Microsoft SQL Server 2016+
-- **UI Components**: Bootstrap 4.6 for responsive layout
-- **Charting**: Chart.js for dashboard visualizations
-- **Email**: System.Net.Mail for automated notifications
+## Getting Started
 
-## Architecture
-
-### Three-Tier Architecture (Improved)
-
-```
-Presentation Layer (ASPX Pages + User Controls)
-    ↓
-Business Logic Layer (/BusinessLogic)
-    ↓
-Data Access Layer (/DataAccess + /Models)
-    ↓
-Database (SQL Server)
-```
-
-### Key Components
-
-**Presentation Layer:**
-- `Default.aspx` - Dashboard with KPIs and trend charts
-- `IncidentList.aspx` - GridView with filtering and pagination
-- `IncidentForm.aspx` - Create/Edit incident reports
-- `Reports.aspx` - Export functionality and custom reports
-- `/UserControls/*` - Reusable UI components
-
-**Business Logic Layer:**
-- `IncidentManager.cs` - Core business rules and validation
-- `NotificationService.cs` - Email alerts for critical incidents
-- `ReportGenerator.cs` - PDF/Excel export logic
-
-**Data Access Layer:**
-- `DatabaseHelper.cs` - SQL connection management and base operations
-- `IncidentRepository.cs` - All incident-related database operations
-- `UserRepository.cs` - User authentication and management
-- `/Models/*` - Plain C# objects representing database entities
-
-**Database Scripts:**
-- `DatabaseSetup.sql` - Schema creation and indexes
-- `SeedData.sql` - Test data population
-- `StoredProcedures.sql` - All stored procedures in one place
-
-## Database Schema
-
-### Core Tables
-
-**Incidents**
-```sql
-- IncidentID (PK, INT, Identity)
-- Title (NVARCHAR(200), Required)
-- Description (NVARCHAR(MAX))
-- Severity (TINYINT, 1-5 scale)
-- IncidentDate (DATETIME)
-- LocationID (FK)
-- DepartmentID (FK)
-- CategoryID (FK)
-- ReportedByUserID (FK)
-- Status (NVARCHAR(50), Default: 'Open')
-- CreatedDate (DATETIME)
-- LastModifiedDate (DATETIME)
-```
-
-**IncidentActions**
-```sql
-- ActionID (PK)
-- IncidentID (FK)
-- ActionDescription (NVARCHAR(500))
-- AssignedToUserID (FK)
-- DueDate (DATETIME)
-- CompletedDate (DATETIME)
-- Status (NVARCHAR(50))
-```
-
-**Supporting Tables:**
-- Departments (organizational structure)
-- Locations (physical areas/buildings)
-- Categories (incident types: Fall, Fire, Chemical Spill, etc.)
-- Users (staff and safety officers)
-
-### Key Indexes
-
-```sql
-IX_Incidents_Status - Non-clustered on Status
-IX_Incidents_IncidentDate - Non-clustered DESC on IncidentDate
-IX_Incidents_Severity - Non-clustered on Severity
-IX_Incidents_Department - Non-clustered on DepartmentID
-```
-
-## Features Implementation
-
-### Phase 1: Core Functionality (Required)
-
-#### 1. CRUD Operations
-- Create new incident reports with full validation
-- View incident details with related actions
-- Update incident status and details
-- Soft delete (Status = 'Archived')
-
-#### 2. GridView with Advanced Features
-- Server-side pagination (20 records per page)
-- Multi-column sorting
-- ViewState optimization to prevent bloat
-- Inline editing for Status field
-
-#### 3. Data Validation
-- RequiredFieldValidator for mandatory fields
-- RangeValidator for Severity (1-5)
-- CustomValidator for IncidentDate (cannot be future)
-- RegularExpressionValidator for email formats
-
-#### 4. User Controls
-- `IncidentSummary.ascx` - Reusable incident card
-- `FilterPanel.ascx` - Search and filter controls
-- `ActionTracker.ascx` - Corrective actions widget
-
-### Phase 2: Advanced Features (Choose 3+)
-
-#### 1. Dashboard with KPIs ✓
-**Implementation:**
-- Chart.js integration via CDN
-- Real-time metrics: Total Incidents, Open vs Closed, Average Resolution Time
-- Trend charts: Incidents by Month, Incidents by Department, Severity Distribution
-- Top 5 recurring issue categories
-
-**Technical Details:**
-- AJAX UpdatePanel for async data refresh
-- Stored procedure `sp_GetDashboardMetrics` for optimized queries
-- JSON serialization for chart data binding
-
-#### 2. Email Notifications ✓
-**Implementation:**
-- Automatic alerts on incident creation (Severity 4-5)
-- Daily digest of open incidents to department managers
-- Reminder emails for overdue corrective actions
-
-**Technical Details:**
-- Async email sending to avoid blocking UI
-- SMTP configuration in Web.config
-- HTML email templates with incident details
-- Retry logic for failed deliveries
-
-#### 3. Advanced Search & Filtering ✓
-**Implementation:**
-- Multi-criteria search (Date Range, Department, Severity, Status, Keyword)
-- Real-time results update using AJAX
-- Search history saved in Session
-- Export filtered results to Excel
-
-**Technical Details:**
-- Dynamic SQL generation with parameterized queries (SQL injection prevention)
-- Debounced text input to reduce server load
-- GridView filtering without full page postback
-
-#### 4. Excel Export
-**Implementation:**
-- Export incident list with all filters applied
-- Formatted Excel with headers, borders, and conditional formatting
-- Separate sheets for Incidents and Related Actions
-
-**Technical Details:**
-- ClosedXML library for Excel generation
-- Stream response to browser without temp files
-- Cell styling for severity levels (Red = Critical, Yellow = Moderate)
-
-## Development Setup
+Follow these steps to set up and run the project locally.
 
 ### Prerequisites
-- Visual Studio 2019/2022
-- SQL Server 2016+ (Express Edition acceptable)
-- IIS Express (included with Visual Studio)
 
-### Database Setup
+-   Visual Studio 2019 or later
+-   .NET Framework 4.7.2 or later
+-   SQL Server (LocalDB or a full instance)
 
-1. Execute `DatabaseSetup.sql` to create schema
-2. Execute `SeedData.sql` to populate reference data
-3. Update connection string in `Web.config`:
+### Installation
 
-```xml
-<connectionStrings>
-    <add name="IncidentDB" 
-         connectionString="Server=localhost;Database=IncidentManagement;Integrated Security=true;" 
-         providerName="System.Data.SqlClient" />
-</connectionStrings>
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    ```
+2.  **Database Setup:**
+    -   Open SQL Server Management Studio (SSMS) or use the `sqlcmd` utility.
+    -   Execute the `App_Data/DatabaseSetup.sql` script to create the `IncidentManagement` database and tables.
+    -   Execute `App_Data/StoredProcedures.sql` to create the necessary stored procedures.
+    -   (Optional) Run `App_Data/SeedData.sql` to populate the database with initial lookup data.
 
-### Application Setup
+3.  **Configure Connection String:**
+    -   Open the `Web.config` file.
+    -   Locate the `IncidentDB` connection string and update the `Server` attribute to point to your SQL Server instance. For SQL Express, you might use `.\SQLEXPRESS`.
+    ```xml
+    <connectionStrings>
+      <add name="IncidentDB"
+           connectionString="Server=(localdb)\MSSQLLocalDB;Database=IncidentManagement;Integrated Security=true;"
+           providerName="System.Data.SqlClient" />
+    </connectionStrings>
+    ```
 
-1. Clone repository
-2. Open `IncidentManagement.sln` in Visual Studio
-3. Restore NuGet packages
-4. Build solution (Ctrl+Shift+B)
-5. Run (F5)
+4.  **Run the Application:**
+    -   Open the `datawise.sln` file in Visual Studio.
+    -   Set `Default.aspx` as the start page.
+    -   Press `F5` to build and run the project. The application will open in your default browser.
 
-Default URL: `http://localhost:55123/`
+## Roadmap
 
-### Configuration
+This section outlines potential future enhancements based on the initial project requirements.
 
-**Web.config - AppSettings:**
-```xml
-<appSettings>
-    <add key="AlertEmail.Enabled" value="true" />
-    <add key="AlertEmail.CriticalSeverityThreshold" value="4" />
-    <add key="AlertEmail.Recipients" value="safety@company.com" />
-    <add key="SMTP.Host" value="smtp.gmail.com" />
-    <add key="SMTP.Port" value="587" />
-</appSettings>
-```
-
-## Code Standards
-
-### Naming Conventions
-- Page variables: `btnSave`, `txtTitle`, `ddlDepartment`
-- Classes: PascalCase (`IncidentManager`)
-- Methods: PascalCase (`GetIncidentById`)
-- Private fields: `_fieldName`
-- Constants: UPPER_CASE
-
-### Error Handling
-```csharp
-try
-{
-    // Database operation
-}
-catch (SqlException sqlEx)
-{
-    // Log to file
-    Logger.LogError(sqlEx);
-    // Show user-friendly message
-    lblError.Text = "Unable to process request. Please contact support.";
-}
-```
-
-### Security
-- Parameterized queries for all database operations
-- Input validation on both client and server
-- XSS prevention via `Server.HtmlEncode()`
-- Role-based access control for sensitive operations
-
-## Testing
-
-### Test Data
-The `SeedData.sql` script creates:
-- 5 departments
-- 10 users (including safety officers)
-- 50 sample incidents across 6 months
-- 75 corrective actions
-
-### Manual Test Cases
-1. Create incident with all required fields → Success
-2. Create incident with Severity 5 → Email sent to safety@company.com
-3. Filter incidents by date range → Correct results displayed
-4. Export filtered results → Excel file downloads
-5. Edit incident status to 'Closed' → LastModifiedDate updates
-
-## Deployment
-
-### Windows Server Setup
-
-1. Install IIS with ASP.NET 4.7+ support
-2. Create application pool (.NET Framework v4.0, Integrated Pipeline)
-3. Deploy application files to `C:\inetpub\wwwroot\IncidentManagement`
-4. Configure SQL Server connection (update Web.config)
-5. Set folder permissions for IIS_IUSRS
-
-### Connection String (Production)
-```xml
-<connectionStrings>
-    <add name="IncidentDB" 
-         connectionString="Server=prod-sql-server;Database=IncidentManagement;User Id=app_user;Password=***;" 
-         providerName="System.Data.SqlClient" />
-</connectionStrings>
-```
-
-## Performance Considerations
-
-### Database Optimization
-- Indexes on all foreign keys
-- Stored procedures for complex queries (avoid N+1 problem)
-- Pagination to limit result sets
-- Archive old incidents (Status = 'Archived') to reduce table size
-
-### ViewState Management
-- Disabled ViewState on read-only controls
-- GridView: `EnableViewState="false"` (data rebound on every postback)
-- Use Session for large filter objects instead of ViewState
-
-### Caching Strategy
-```csharp
-// Cache department list (rarely changes)
-if (Cache["Departments"] == null)
-{
-    Cache["Departments"] = DatabaseHelper.GetDepartments();
-    Cache.Timeout = TimeSpan.FromHours(24);
-}
-```
-
-## Future Enhancements
-
-- Mobile-responsive incident reporting form
-- REST API for integration with other systems
-- Advanced analytics with ML-based risk prediction
-- Multi-language support (Hebrew/English)
-- Document attachment (photos of incident scene)
-
-## Project Structure
-
-```
-/IncidentManagement
-├── /BusinessLogic
-│   ├── IncidentManager.cs
-│   ├── NotificationService.cs
-│   └── ReportGenerator.cs
-├── /DataAccess
-│   ├── DatabaseHelper.cs
-│   ├── IncidentRepository.cs
-│   └── UserRepository.cs
-├── /Models
-│   ├── Incident.cs
-│   ├── IncidentAction.cs
-│   ├── Department.cs
-│   └── User.cs
-├── /UserControls
-│   ├── IncidentSummary.ascx
-│   ├── FilterPanel.ascx
-│   └── ActionTracker.ascx
-├── /Assets
-│   ├── /css
-│   │   └── site.css
-│   ├── /js
-│   │   ├── charts.js
-│   │   └── validation.js
-│   └── /images
-├── /Database
-│   ├── DatabaseSetup.sql
-│   ├── SeedData.sql
-│   └── StoredProcedures.sql
-├── Default.aspx (Dashboard)
-├── IncidentList.aspx
-├── IncidentForm.aspx
-├── Reports.aspx
-├── Web.config
-└── README.md
-```
+-   **AI Integration**: Implement AI-powered features for automatic incident categorization and trend analysis.
+-   **Advanced Reporting**: Add drill-down capabilities to KPIs and dashboards.
+-   **Offline Support**: Develop offline capabilities for data entry in environments with limited connectivity.
+-   **Web API**: Create a separate Web API using Microservices architecture for modern client integrations.
+-   **File Uploads**: Allow users to attach images and documents to incident reports.
 
 
