@@ -119,14 +119,10 @@
                     <!-- Action Buttons -->
                     <div class="row">
                         <div class="col-12">
-                            <asp:Button ID="btnSearch" runat="server" Text="Search"
-                                        CssClass="btn btn-primary" OnClick="btnSearch_Click">
-                                <i class="fas fa-search"></i>
-                            </asp:Button>
-                            <asp:Button ID="btnClear" runat="server" Text="Clear Filters"
-                                        CssClass="btn btn-secondary ml-2" OnClick="btnClear_Click">
-                                <i class="fas fa-times"></i>
-                            </asp:Button>
+                            <asp:Button ID="btnSearch" runat="server" Text="🔍 Search"
+                                        CssClass="btn btn-primary" OnClick="btnSearch_Click" />
+                            <asp:Button ID="btnClear" runat="server" Text="✖ Clear Filters"
+                                        CssClass="btn btn-secondary ml-2" OnClick="btnClear_Click" />
 
                             <span class="ml-3">
                                 <asp:Label ID="lblResultCount" runat="server" CssClass="badge badge-info"

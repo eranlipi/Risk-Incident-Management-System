@@ -271,9 +271,20 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Actions">
                                     <ItemTemplate>
-                                        <a href='IncidentForm.aspx?id=<%# Eval("IncidentID") %>&mode=view' class="btn btn-sm btn-outline-primary">
+                                        <button type="button" class="btn btn-sm btn-outline-primary view-incident-btn" 
+                                                data-id='<%# Eval("IncidentID") %>'
+                                                data-title='<%# Eval("Title") %>'
+                                                data-description='<%# HttpUtility.HtmlEncode(Eval("Description")) %>'
+                                                data-severity='<%# Eval("Severity") %>'
+                                                data-date='<%# Eval("IncidentDate", "{0:MMM dd, yyyy}") %>'
+                                                data-status='<%# Eval("Status") %>'
+                                                data-department='<%# Eval("DepartmentName") %>'
+                                                data-location='<%# Eval("LocationName") %>'
+                                                data-reportedby='<%# Eval("ReportedBy") %>'
+                                                data-injuries='<%# Eval("InjuriesReported") %>'
+                                                title="View">
                                             <i class="fas fa-eye"></i>
-                                        </a>
+                                        </button>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
@@ -292,7 +303,19 @@
     <script>
         // Initialize charts when page loads
         $(document).ready(function () {
-            initializeDashboardCharts();
+            if (typeof initializeDashboardCharts === 'function') {
+                initializeDashboardCharts();
+            } else {
+                // Fallback: try after a short delay in case scripts are still loading
+                console.warn('initializeDashboardCharts is not defined on DOM ready. Retrying shortly.');
+                setTimeout(function () {
+                    if (typeof initializeDashboardCharts === 'function') {
+                        initializeDashboardCharts();
+                    } else if (window.console) {
+                        console.error('initializeDashboardCharts could not be found.');
+                    }
+                }, 200);
+            }
         });
     </script>
 </asp:Content>

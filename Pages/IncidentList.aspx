@@ -112,10 +112,20 @@
                                         <asp:TemplateField HeaderText="Actions">
                                             <ItemTemplate>
                                                 <div class="btn-group" role="group">
-                                                    <a href='IncidentForm.aspx?id=<%# Eval("IncidentID") %>&mode=view'
-                                                       class="btn btn-sm btn-outline-primary" title="View">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary view-incident-btn" 
+                                                            data-id='<%# Eval("IncidentID") %>'
+                                                            data-title='<%# Eval("Title") %>'
+                                                            data-description='<%# HttpUtility.HtmlEncode(Eval("Description")) %>'
+                                                            data-severity='<%# Eval("Severity") %>'
+                                                            data-date='<%# Eval("IncidentDate", "{0:MMM dd, yyyy}") %>'
+                                                            data-status='<%# Eval("Status") %>'
+                                                            data-department='<%# Eval("DepartmentName") %>'
+                                                            data-location='<%# Eval("LocationName") %>'
+                                                            data-reportedby='<%# Eval("ReportedBy") %>'
+                                                            data-injuries='<%# Eval("InjuriesReported") %>'
+                                                            title="View">
                                                         <i class="fas fa-eye"></i>
-                                                    </a>
+                                                    </button>
                                                     <a href='IncidentForm.aspx?id=<%# Eval("IncidentID") %>&mode=edit'
                                                        class="btn btn-sm btn-outline-secondary" title="Edit">
                                                         <i class="fas fa-edit"></i>
