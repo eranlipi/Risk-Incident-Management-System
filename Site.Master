@@ -29,7 +29,7 @@
         <!-- Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/Pages/Default.aspx">
+                <a class="navbar-brand" href='<%= ResolveUrl("~/Pages/Default.aspx") %>'>
                     <i class="fas fa-shield-alt"></i> Incident Management
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -38,23 +38,18 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="/Pages/Default.aspx">
+                            <a class="nav-link" href='<%= ResolveUrl("~/Pages/Default.aspx") %>'>
                                 <i class="fas fa-home"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Pages/IncidentList.aspx">
+                            <a class="nav-link" href='<%= ResolveUrl("~/Pages/IncidentList.aspx") %>'>
                                 <i class="fas fa-list"></i> Incidents
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/Pages/IncidentForm.aspx">
+                            <a class="nav-link" href='<%= ResolveUrl("~/Pages/IncidentForm.aspx") %>'>
                                 <i class="fas fa-plus-circle"></i> New Incident
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Pages/Reports.aspx">
-                                <i class="fas fa-file-excel"></i> Reports
                             </a>
                         </li>
                     </ul>
@@ -88,6 +83,49 @@
                 </span>
             </div>
         </footer>
+
+        <!-- View Incident Modal -->
+        <div class="modal fade" id="viewIncidentModal" tabindex="-1" role="dialog" aria-labelledby="viewIncidentModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewIncidentModalLabel">Incident Details #<span id="modalIncidentId"></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <h4 id="modalTitle"></h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                                <p><strong>Severity:</strong> <span id="modalSeverity"></span></p>
+                                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Department:</strong> <span id="modalDepartment"></span></p>
+                                <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+                                <p><strong>Reported By:</strong> <span id="modalReportedBy"></span></p>
+                                <p><strong>Injuries Reported:</strong> <span id="modalInjuries"></span></p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>Description</h6>
+                                <p id="modalDescription" class="bg-light p-3 border rounded"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 
     <!-- jQuery (required for Bootstrap) -->
@@ -97,8 +135,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom JS -->
-    <script src="/Scripts/validation.js"></script>
-    <script src="/Scripts/charts.js"></script>
+    <script src='<%= ResolveUrl("~/Scripts/validation.js") %>'></script>
+    <script src='<%= ResolveUrl("~/Scripts/modal.js") %>'></script>
+    <script src='<%= ResolveUrl("~/Scripts/charts.js") %>'></script>
 
     <asp:ContentPlaceHolder ID="ScriptsContent" runat="server">
     </asp:ContentPlaceHolder>
